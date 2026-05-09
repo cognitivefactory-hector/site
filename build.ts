@@ -52,7 +52,7 @@ export function renderBody(markdown: string): string {
 
 export type RenderedPost = Post & { html: string };
 
-export const MAD_LABEL: Record<Mad, string> = {
+const MAD_LABEL: Record<Mad, string> = {
   M: "MOATS",
   A: "AFFORDANCE",
   D: "DIFFUSION",
