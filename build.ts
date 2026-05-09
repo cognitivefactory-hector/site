@@ -49,3 +49,41 @@ export async function parsePost(path: string): Promise<Post> {
 export function renderBody(markdown: string): string {
   return marked.parse(markdown, { async: false }) as string;
 }
+
+export type RenderedPost = Post & { html: string };
+
+const MAD_LABEL: Record<Mad, string> = {
+  M: "MOATS",
+  A: "AFFORDANCE",
+  D: "DIFFUSION",
+};
+
+let postTemplateCache: string | null = null;
+
+async function loadPostTemplate(): Promise<string> {
+  if (postTemplateCache) return postTemplateCache;
+  postTemplateCache = await readFile("notes/_template.html", "utf8");
+  return postTemplateCache;
+}
+
+function applyTemplate(template: string, vars: Record<string, string>): string {
+  return template.replace(/\{\{(\w+)\}\}/g, (_, key) => {
+    if (!(key in vars)) {
+      throw new Error(`template placeholder '{{${key}}}' has no value`);
+    }
+    return vars[key];
+  });
+}
+
+export async function renderPostPage(post: RenderedPost): Promise<string> {
+  const template = await loadPostTemplate();
+  return applyTemplate(template, {
+    title: post.title,
+    dek: post.dek,
+    slug: post.slug,
+    mad: post.mad,
+    mad_label: MAD_LABEL[post.mad],
+    date: post.date,
+    body: post.html,
+  });
+}

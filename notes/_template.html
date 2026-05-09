@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{title}} — Cognitive Factory</title>
+  <meta name="description" content="{{dek}}" />
+
+  <meta property="og:title" content="{{title}} — Cognitive Factory" />
+  <meta property="og:description" content="{{dek}}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="https://cognitivefactory.ai/notes/{{slug}}/" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{title}} — Cognitive Factory" />
+  <meta name="twitter:description" content="{{dek}}" />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f4f1ec'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='22' font-style='italic' text-anchor='middle' fill='%230f1410'%3EC%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="frame" aria-hidden="false">
+    <div class="frame__corner frame__corner--tl">
+      <span class="frame__line">§ 2026</span>
+      <span class="frame__line">COGNITIVE FACTORY</span>
+    </div>
+    <div class="frame__corner frame__corner--tr">
+      <span class="frame__line">{{mad}} · {{mad_label}}</span>
+      <span class="frame__line">{{date}}</span>
+    </div>
+  </header>
+
+  <main class="post">
+    <header class="post__header reveal">
+      <span class="mono post__kicker">§ {{mad}} · {{mad_label}}</span>
+      <h1 class="post__title">{{title}}</h1>
+      <p class="mono post__dek">{{dek}}</p>
+      <div class="post__rule"></div>
+    </header>
+    <article class="post__body prose-long">
+      {{body}}
+    </article>
+    <footer class="post__nav">
+      <a class="mono" href="/notes/">← all notes</a>
+      <span class="mono">cognitivefactory.ai</span>
+    </footer>
+  </main>
+
+  <footer class="footer">
+    <span class="mono">© 2026 · COGNITIVE FACTORY</span>
+    <span class="mono">BUILT ON THE FLOOR · DEPLOYED AT THE EDGE</span>
+  </footer>
+
+  <script src="/script.js" defer></script>
+</body>
+</html>
