@@ -52,7 +52,7 @@ export function renderBody(markdown: string): string {
 
 export type RenderedPost = Post & { html: string };
 
-const MAD_LABEL: Record<Mad, string> = {
+export const MAD_LABEL: Record<Mad, string> = {
   M: "MOATS",
   A: "AFFORDANCE",
   D: "DIFFUSION",
@@ -85,5 +85,50 @@ export async function renderPostPage(post: RenderedPost): Promise<string> {
     mad_label: MAD_LABEL[post.mad],
     date: post.date,
     body: post.html,
+  });
+}
+
+let archiveTemplateCache: string | null = null;
+let rowTemplateCache: string | null = null;
+
+async function loadArchiveTemplates(): Promise<{
+  archive: string;
+  row: string;
+}> {
+  if (!archiveTemplateCache) {
+    archiveTemplateCache = await readFile(
+      "notes/_index-template.html",
+      "utf8",
+    );
+  }
+  if (!rowTemplateCache) {
+    rowTemplateCache = await readFile("notes/_row-template.html", "utf8");
+  }
+  return { archive: archiveTemplateCache, row: rowTemplateCache };
+}
+
+export async function renderArchivePage(
+  posts: RenderedPost[],
+): Promise<string> {
+  const sorted = [...posts].sort((a, b) => b.date.localeCompare(a.date));
+  const { archive, row } = await loadArchiveTemplates();
+
+  const rows = sorted
+    .map((post, i) =>
+      applyTemplate(row, {
+        slug: post.slug,
+        num: String(i + 1).padStart(3, "0"),
+        title: post.title,
+        mad: post.mad,
+        mad_label: MAD_LABEL[post.mad],
+        date: post.date,
+        dek: post.dek,
+      }),
+    )
+    .join("\n");
+
+  return applyTemplate(archive, {
+    rows,
+    count: String(sorted.length),
   });
 }

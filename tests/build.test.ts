@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parsePost, renderBody, renderPostPage, RenderedPost } from "../build.ts";
+import { parsePost, renderBody, renderPostPage, RenderedPost, renderArchivePage } from "../build.ts";
 
 describe("parsePost", () => {
   test("parses valid frontmatter and body", async () => {
@@ -86,5 +86,54 @@ describe("renderPostPage", () => {
     expect(html).toContain(
       'content="https://cognitivefactory.ai/notes/sample-post/"',
     );
+  });
+});
+
+describe("renderArchivePage", () => {
+  const posts: RenderedPost[] = [
+    {
+      slug: "first",
+      title: "First post",
+      dek: "Dek 1",
+      mad: "M",
+      date: "2026-05-09",
+      body: "",
+      html: "",
+    },
+    {
+      slug: "second",
+      title: "Second post",
+      dek: "Dek 2",
+      mad: "A",
+      date: "2026-05-01",
+      body: "",
+      html: "",
+    },
+  ];
+
+  test("renders one row per post in reverse-chronological order", async () => {
+    const html = await renderArchivePage(posts);
+    const firstIdx = html.indexOf("First post");
+    const secondIdx = html.indexOf("Second post");
+    expect(firstIdx).toBeGreaterThan(-1);
+    expect(secondIdx).toBeGreaterThan(-1);
+    expect(firstIdx).toBeLessThan(secondIdx); // newer first
+  });
+
+  test("numbers entries from 001 in display order", async () => {
+    const html = await renderArchivePage(posts);
+    expect(html).toContain("NOTE 001");
+    expect(html).toContain("NOTE 002");
+  });
+
+  test("expands mad labels in tags", async () => {
+    const html = await renderArchivePage(posts);
+    expect(html).toContain("M · MOATS");
+    expect(html).toContain("A · AFFORDANCE");
+  });
+
+  test("injects total count into corner", async () => {
+    const html = await renderArchivePage(posts);
+    expect(html).toMatch(/2\s*ENTRIES/);
   });
 });

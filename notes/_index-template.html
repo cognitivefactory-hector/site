@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notes — Cognitive Factory</title>
+  <meta name="description" content="Field notes from the floor — ideas for AI in regulated manufacturing, organized around moats, affordance, and diffusion." />
+
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f4f1ec'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='22' font-style='italic' text-anchor='middle' fill='%230f1410'%3EC%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="frame" aria-hidden="false">
+    <div class="frame__corner frame__corner--tl">
+      <span class="frame__line">§ 2026</span>
+      <span class="frame__line">COGNITIVE FACTORY</span>
+    </div>
+    <div class="frame__corner frame__corner--tr">
+      <span class="frame__line">NOTES</span>
+      <span class="frame__line">{{count}} ENTRIES</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="block reveal">
+      <header class="block__header">
+        <span class="mono">§ NOTES</span>
+        <span class="mono">IDEAS FOR REGULATED MANUFACTURING</span>
+      </header>
+      <h2 class="block__title">Field notes from the floor.</h2>
+      <div class="prose">
+        <p>Working notes on building AI for regulated manufacturing. Each entry maps to one of three claims: a <em>moat</em> built from the customer back, an <em>affordance</em> that makes the path obvious, or a <em>diffusion</em> gap waiting to be closed.</p>
+        <p>Written under audit, between batches, between flights.</p>
+      </div>
+
+      <ul class="notes-archive" role="list">
+        {{rows}}
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <a class="mono" href="/">← cognitivefactory.ai</a>
+    <span class="mono">© 2026 · COGNITIVE FACTORY</span>
+  </footer>
+
+  <script src="/script.js" defer></script>
+</body>
+</html>
