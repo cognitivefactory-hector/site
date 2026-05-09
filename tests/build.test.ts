@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { parsePost } from "../build.ts";
+import { parsePost, renderBody } from "../build.ts";
 
 describe("parsePost", () => {
   test("parses valid frontmatter and body", async () => {
@@ -29,5 +29,27 @@ describe("parsePost", () => {
       `---\ntitle: t\nslug: s\nmad: Z\ndate: 2026-05-09\ndek: d\n---\nbody`,
     );
     expect(parsePost(path)).rejects.toThrow(/mad/);
+  });
+});
+
+describe("renderBody", () => {
+  test("renders headings, bold, and inline code", () => {
+    const html = renderBody("# Title\n\nBody with **bold** and `code`.");
+    expect(html).toContain("<h1>Title</h1>");
+    expect(html).toContain("<strong>bold</strong>");
+    expect(html).toContain("<code>code</code>");
+  });
+
+  test("renders fenced code blocks", () => {
+    const html = renderBody("```\nlet x = 1;\n```");
+    expect(html).toContain("<pre>");
+    expect(html).toContain("<code>");
+    expect(html).toContain("let x = 1;");
+  });
+
+  test("renders blockquotes", () => {
+    const html = renderBody("> A pull quote.");
+    expect(html).toContain("<blockquote>");
+    expect(html).toContain("A pull quote.");
   });
 });

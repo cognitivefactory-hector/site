@@ -1,5 +1,6 @@
 import matter from "gray-matter";
 import { readFile } from "node:fs/promises";
+import { marked } from "marked";
 
 export type Mad = "M" | "A" | "D";
 
@@ -13,6 +14,11 @@ export type Post = {
 };
 
 const REQUIRED = ["title", "slug", "mad", "date", "dek"] as const;
+
+marked.setOptions({
+  gfm: true,
+  breaks: false,
+});
 
 export async function parsePost(path: string): Promise<Post> {
   const raw = await readFile(path, "utf8");
@@ -38,4 +44,8 @@ export async function parsePost(path: string): Promise<Post> {
     date: typeof data.date === "string" ? data.date : data.date.toISOString().split("T")[0],
     body: content.trim(),
   };
+}
+
+export function renderBody(markdown: string): string {
+  return marked.parse(markdown, { async: false }) as string;
 }
