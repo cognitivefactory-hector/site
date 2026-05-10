@@ -1,5 +1,7 @@
 import matter from "gray-matter";
-import { readFile } from "node:fs/promises";
+import { readFile, mkdir, writeFile, copyFile } from "node:fs/promises";
+import { dirname, join, basename } from "node:path";
+import { existsSync } from "node:fs";
 import { marked } from "marked";
 
 export type Mad = "M" | "A" | "D";
@@ -131,4 +133,58 @@ export async function renderArchivePage(
     rows,
     count: String(sorted.length),
   });
+}
+
+export type BuildOptions = {
+  notesDir: string;
+  outDir: string;
+  staticAssets: string[];
+};
+
+export async function build(opts: BuildOptions): Promise<void> {
+  // 1. Discover Markdown sources (skip files starting with `_`)
+  const glob = new Bun.Glob("*.md");
+  const mdPaths: string[] = [];
+  for await (const file of glob.scan({ cwd: opts.notesDir })) {
+    if (!file.startsWith("_")) mdPaths.push(join(opts.notesDir, file));
+  }
+
+  // 2. Parse + render every post
+  const rendered: RenderedPost[] = [];
+  for (const path of mdPaths) {
+    const post = await parsePost(path);
+    rendered.push({ ...post, html: renderBody(post.body) });
+  }
+
+  // 3. Write per-post pages
+  for (const post of rendered) {
+    const html = await renderPostPage(post);
+    const outPath = join(opts.outDir, "notes", post.slug, "index.html");
+    await mkdir(dirname(outPath), { recursive: true });
+    await writeFile(outPath, html, "utf8");
+  }
+
+  // 4. Write archive page
+  const archiveHtml = await renderArchivePage(rendered);
+  const archivePath = join(opts.outDir, "notes", "index.html");
+  await mkdir(dirname(archivePath), { recursive: true });
+  await writeFile(archivePath, archiveHtml, "utf8");
+
+  // 5. Copy static assets
+  await mkdir(opts.outDir, { recursive: true });
+  for (const asset of opts.staticAssets) {
+    if (existsSync(asset)) {
+      await copyFile(asset, join(opts.outDir, basename(asset)));
+    }
+  }
+}
+
+// CLI entry — only runs when executed directly via `bun run build.ts`
+if (import.meta.main) {
+  await build({
+    notesDir: "notes",
+    outDir: "dist",
+    staticAssets: ["index.html", "styles.css", "script.js"],
+  });
+  console.log("✓ build complete → dist/");
 }

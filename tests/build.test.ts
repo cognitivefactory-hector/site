@@ -1,5 +1,14 @@
 import { describe, expect, test } from "bun:test";
-import { parsePost, renderBody, renderPostPage, RenderedPost, renderArchivePage } from "../build.ts";
+import {
+  parsePost,
+  renderBody,
+  renderPostPage,
+  RenderedPost,
+  renderArchivePage,
+  build,
+} from "../build.ts";
+import { rm, readdir, readFile as fsReadFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
 
 describe("parsePost", () => {
   test("parses valid frontmatter and body", async () => {
@@ -135,5 +144,40 @@ describe("renderArchivePage", () => {
   test("injects total count into corner", async () => {
     const html = await renderArchivePage(posts);
     expect(html).toMatch(/2\s*ENTRIES/);
+  });
+});
+
+describe("build", () => {
+  const TEST_DIST = "dist-test";
+  const TEST_NOTES = "tests/fixtures/notes";
+
+  test("produces dist with archive and per-post pages", async () => {
+    if (existsSync(TEST_DIST)) await rm(TEST_DIST, { recursive: true });
+
+    await build({
+      notesDir: TEST_NOTES,
+      outDir: TEST_DIST,
+      staticAssets: ["index.html", "styles.css", "script.js"],
+    });
+
+    const files = await readdir(TEST_DIST, { recursive: true });
+    expect(files).toContain("index.html");
+    expect(files).toContain("styles.css");
+    expect(files).toContain("script.js");
+    expect(files.some((f) => f.toString().endsWith("notes/index.html"))).toBe(
+      true,
+    );
+    expect(
+      files.some((f) => f.toString().endsWith("notes/sample-post/index.html")),
+    ).toBe(true);
+
+    const post = await fsReadFile(
+      `${TEST_DIST}/notes/sample-post/index.html`,
+      "utf8",
+    );
+    expect(post).toContain("Sample post");
+    expect(post).toContain("<h1>Heading</h1>");
+
+    await rm(TEST_DIST, { recursive: true });
   });
 });
