@@ -183,6 +183,10 @@ main {
 .cta__arrow { transition: transform 0.35s var(--ease); display: inline-block; }
 .cta:hover .cta__arrow { transform: translateX(0.3rem); }
 
+.block__cta {
+  margin-top: clamp(1.8rem, 3.2vw, 2.6rem);
+}
+
 .hero__antenna {
   align-self: end;
   color: var(--ink);
