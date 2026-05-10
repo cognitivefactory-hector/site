@@ -8,11 +8,29 @@ The marketing site for **Cognitive Factory** (cognitivefactory.ai) — an AI con
 
 ## Repository layout
 
-Three files at root: `index.html`, `styles.css`, `script.js`. No package manager, no build, no tests, no framework. Fonts come from Google Fonts at runtime.
+Homepage source stays flat at the root: `index.html`, `styles.css`, `script.js`. The `notes/` directory holds Markdown post sources plus three HTML templates (`_template.html`, `_index-template.html`, `_row-template.html`). A single `build.ts` (Bun + TypeScript) parses frontmatter, renders Markdown, applies templates, and writes everything to `dist/` — that's what Cloudflare Pages deploys. Tests live in `tests/build.test.ts` and run under `bun test`.
+
+Fonts come from Google Fonts at runtime. The browser-side site itself is still vanilla HTML/CSS/JS — no bundler, no transpiler, no framework. TypeScript is build-time only.
 
 ## Local preview
 
-No build or dev server is configured. To preview, serve the directory statically — e.g. `python3 -m http.server 8000` from the repo root, then open `http://localhost:8000`. Edits to the three files are live on refresh.
+- `bun install` — install deps (one-time per clone).
+- `bun dev` — Bun dev server with hot reload, serves the repo root. Use this for editing `index.html` / `styles.css` / `script.js`.
+- `bun run build` — render Markdown posts and write the deploy artifact to `dist/`.
+- `bun run preview` — serve `dist/` to verify the deploy artifact byte-for-byte before pushing.
+- `bun test` — run the build-pipeline test suite.
+
+Cloudflare Pages picks up `bun run build` automatically on push to `main`. Settings: see `cloudflare-pages.md`.
+
+## Tech stack
+
+- **Source:** GitHub.
+- **Hosting:** Cloudflare Pages, deploys `dist/` on every push to `main`.
+- **Toolchain:** Bun for dev server, build script (`build.ts`), and tests. Two runtime deps: `marked` (Markdown), `gray-matter` (YAML frontmatter). No framework, no bundler.
+- **Browser code:** vanilla HTML, CSS, JavaScript. No transpiler.
+- **TypeScript:** build-time only — `build.ts` and tests.
+
+This stack is deliberately minimal. New build dependencies require an explicit reason; reach for vanilla first.
 
 ## Design system — treat as load-bearing
 
@@ -54,6 +72,16 @@ Each top-level section under `<main>` follows the same skeleton:
 ```
 
 Adding a new section means continuing the `§ NN` numbering and matching this structure so the borders, spacing rhythm, and reveal behavior stay consistent.
+
+## Notes (essays) section
+
+Posts live in `notes/<slug>.md` with frontmatter (`title`, `slug`, `mad: M|A|D`, `date: YYYY-MM-DD`, `dek`). The build renders each to `dist/notes/<slug>/index.html` and the archive at `dist/notes/index.html`.
+
+When adding a post:
+1. Pick the MAD letter the post supports — a single letter, not multiple. If the idea spans two letters, it's two posts.
+2. Match the keynote register (see "Tone of copy"). Re-read the existing post (`audit-trail-moat.md`) before drafting; it sets the cadence.
+3. Use Markdown headings (`##`, `###`), blockquotes for pull quotes, and bullet lists sparingly. Don't introduce custom HTML in posts — extend the templates instead if a real new pattern emerges.
+4. Run `bun run build && bun run preview` and read the post in the browser before committing. Long-form prose looks different at 62ch than it does in your editor.
 
 ## Responsive breakpoints
 
