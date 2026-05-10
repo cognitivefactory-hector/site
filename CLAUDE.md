@@ -8,7 +8,7 @@ The marketing site for **Cognitive Factory** (cognitivefactory.ai) — an AI con
 
 ## Repository layout
 
-Homepage source stays flat at the root: `index.html`, `styles.css`, `script.js`. The `notes/` directory holds Markdown post sources plus three HTML templates (`_template.html`, `_index-template.html`, `_row-template.html`). A single `build.ts` (Bun + TypeScript) parses frontmatter, renders Markdown, applies templates, and writes everything to `dist/` — that's what Cloudflare Pages deploys. Tests live in `tests/build.test.ts` and run under `bun test`.
+Homepage source stays flat at the root: `index.html`, `styles.css`, `script.js`. The `notes/` directory holds Markdown post sources plus three HTML templates (`_template.html`, `_index-template.html`, `_row-template.html`). A single `build.ts` (Bun + TypeScript) parses frontmatter, renders Markdown, applies templates, and writes everything to `dist/` — that's the artifact `wrangler deploy` uploads to Cloudflare Workers. Tests live in `tests/build.test.ts` and run under `bun test`.
 
 Fonts come from Google Fonts at runtime. The browser-side site itself is still vanilla HTML/CSS/JS — no bundler, no transpiler, no framework. TypeScript is build-time only.
 
@@ -20,14 +20,14 @@ Fonts come from Google Fonts at runtime. The browser-side site itself is still v
 - `bun run preview` — same server without rebuilding (use after `bun run build` to check the deploy artifact).
 - `bun test` — run the build-pipeline test suite.
 
-The local server (`server.ts`) is a tiny `Bun.serve` wrapper that resolves directory paths to `index.html` (so `/notes/` maps to `dist/notes/index.html`). Cloudflare Pages does the same in production.
+The local server (`server.ts`) is a tiny `Bun.serve` wrapper that resolves directory paths to `index.html` (so `/notes/` maps to `dist/notes/index.html`). Cloudflare Workers Static Assets does the same in production.
 
-Cloudflare Pages picks up `bun run build` automatically on push to `main`. Settings: see `cloudflare-pages.md`.
+Deploy is via Cloudflare Workers Static Assets — `wrangler.jsonc` at the repo root constrains uploads to `dist/`. Dashboard settings and troubleshooting: see `cloudflare-deploy.md`.
 
 ## Tech stack
 
 - **Source:** GitHub.
-- **Hosting:** Cloudflare Pages, deploys `dist/` on every push to `main`.
+- **Hosting:** Cloudflare Workers Static Assets. `wrangler.jsonc` constrains uploads to `dist/`; the dashboard runs `bun run build` then `npx wrangler deploy` on push to `main`.
 - **Toolchain:** Bun for dev server, build script (`build.ts`), and tests. Two runtime deps: `marked` (Markdown), `gray-matter` (YAML frontmatter). No framework, no bundler.
 - **Browser code:** vanilla HTML, CSS, JavaScript. No transpiler.
 - **TypeScript:** build-time only — `build.ts` and tests.

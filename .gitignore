@@ -5,3 +5,4 @@ dist-test/
 bun.lock
 tests/fixtures/missing-title.md
 tests/fixtures/bad-mad.md
+.wrangler/
