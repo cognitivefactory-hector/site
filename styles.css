@@ -423,6 +423,17 @@ a.contact__value:hover { border-color: var(--rust); color: var(--rust); }
   font-size: 0.65rem;
 }
 
+.footer__link {
+  color: var(--ink-muted);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.footer__link:hover {
+  color: var(--rust);
+  border-bottom-color: var(--rust);
+}
+
 /* ============== REVEAL ON SCROLL ============== */
 
 .reveal { opacity: 0; transform: translateY(2rem); transition: opacity 1.1s var(--ease), transform 1.1s var(--ease); }
