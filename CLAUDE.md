@@ -15,10 +15,12 @@ Fonts come from Google Fonts at runtime. The browser-side site itself is still v
 ## Local preview
 
 - `bun install` — install deps (one-time per clone).
-- `bun dev` — Bun dev server with hot reload, serves the repo root. Use this for editing `index.html` / `styles.css` / `script.js`.
-- `bun run build` — render Markdown posts and write the deploy artifact to `dist/`.
-- `bun run preview` — serve `dist/` to verify the deploy artifact byte-for-byte before pushing.
+- `bun run build` — render Markdown posts, copy assets, write the deploy artifact to `dist/`.
+- `bun dev` — alias for `bun run build && bun run server.ts dist`. One-shot: build then serve `dist/` at `http://localhost:3000/`. **Re-run after editing** any source file (homepage HTML/CSS/JS or a `notes/*.md` post). No hot reload.
+- `bun run preview` — same server without rebuilding (use after `bun run build` to check the deploy artifact).
 - `bun test` — run the build-pipeline test suite.
+
+The local server (`server.ts`) is a tiny `Bun.serve` wrapper that resolves directory paths to `index.html` (so `/notes/` maps to `dist/notes/index.html`). Cloudflare Pages does the same in production.
 
 Cloudflare Pages picks up `bun run build` automatically on push to `main`. Settings: see `cloudflare-pages.md`.
 

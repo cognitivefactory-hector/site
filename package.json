@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun --hot serve",
+    "dev": "bun run build && bun run server.ts dist",
     "build": "bun run build.ts",
-    "preview": "bun --hot --cwd dist serve",
+    "preview": "bun run server.ts dist",
     "test": "bun test"
   },
   "devDependencies": {
